@@ -1,0 +1,253 @@
+---
+title: "Various Ways of Publishing on GitHub Pages: When to Use Which Method?"
+author: "Jae Jung"
+date: today
+format: 
+    html: 
+       toc: true
+       toc-depth: 3
+       toc-expand: 1
+       toc-location: right
+       embed-resources: true
+---
+
+# When to Use Which Publication Method in GitHub Pages
+
+### Overview
+
+After reading and grading the class notes, it was clear that a more systematic explanation was needed. I prepared and published a Canvas page. In short, there are five ways to publish: The A1 method is the one I introduced early in the semester. However, the method works only when you publish a single page to the GitHub repo. If you add more pages, subsequent pages overwrite previous pages. Thus, avoid A1 unless you are sure you will never add more pages to the same directory. If you want to publish multiple pages, A2/B1 is the next easiest. That was the focus of my lecture.
+
+| Option | Pages | Needs `_quarto.yml`? | Terminal? | URL includes file name? | Updates |
+|----|----|----|----|----|----|
+| A1: `quarto publish` | 1 | No | Yes | No | Re-run command |
+| A2: Render + Settings | 1 | No | No | Yes (unless `index`) | Render, commit, push |
+| B1: Loose pages | Several | No | No | Yes | Render, commit, push |
+| B2-a: Website + `quarto publish` | Several | Yes | Yes | No (menu links pages) | Re-run command |
+| B2-b: Website + `/docs` | Several | Yes | Render only | No (menu links pages) | Render, commit, push |
+
+When you create a portfolio website, you will use the B2-a or B2-b methods, but website creation was already introduced in a previous assignment. I hope the module can help you compare and contrast the pros and cons of the various methods.
+
+### Mermaid Diagram
+
+```{mermaid}
+flowchart TD
+    Start([Start]) --> Prereq["Before you begin:<br/>Public GitHub repository<br/>Positron project connected to GitHub<br/>Quarto installed"]
+    Prereq --> Pages{"How many pages<br/>do you want to publish?"}
+
+    Pages -->|One page| OnePage{"Do you want to use<br/>the Terminal?"}
+    OnePage -->|Yes| A1["A1: quarto publish gh-pages<br/><br/>Fastest and recommended<br/>Root URL<br/><br/>Caution: publishing another page<br/>will replace the first page"]
+    OnePage -->|No| A2["A2: Render + GitHub Pages settings<br/><br/>Render the HTML file<br/>Commit and push it<br/>URL includes file name<br/><br/>Use index.qmd for the root URL"]
+
+    Pages -->|Multiple pages| Website{"Do you want the pages<br/>connected as a website?"}
+    Website -->|No| B1["B1: Loose pages<br/><br/>Render each page<br/>Commit and push the HTML files<br/>Each URL includes the file name<br/><br/>No shared navigation"]
+    Website -->|Yes| B2["B2: Quarto website<br/><br/>Requires _quarto.yml<br/>and index.qmd<br/><br/>Pages have a menu and home page"]
+
+    B2 --> Publish{"How do you want<br/>to publish the website?"}
+    Publish -->|Use the Terminal| B2a["B2-a: quarto publish gh-pages<br/><br/>Recommended<br/>Quarto renders the entire site<br/>and publishes to gh-pages<br/><br/>Re-run after updates"]
+    Publish -->|Use the docs folder| B2b["B2-b: Render to /docs<br/><br/>Set output-dir: docs<br/>Render the website<br/>Commit and push docs<br/><br/>GitHub Pages serves main /docs"]
+    Publish -->|Advanced automation| B2c["B2-c: GitHub Actions<br/><br/>Optional advanced method<br/>Rebuilds the site automatically<br/>after each push"]
+
+    A1 --> End([Published])
+    A2 --> End
+    B1 --> End
+    B2a --> End
+    B2b --> End
+    B2c --> End
+
+    classDef recommended fill:#d9f2d9,stroke:#2e7d32,stroke-width:2px;
+    classDef caution fill:#fff3cd,stroke:#b8860b,stroke-width:2px;
+    classDef website fill:#dceeff,stroke:#2878b5,stroke-width:2px;
+
+    class A1,B2a recommended;
+    class A1 caution;
+    class B2,B2a,B2b,B2c website;
+```
+
+### Before you start (everyone)
+
+-   You have a GitHub account and a **public** repository (free accounts need public repos for GitHub Pages).
+
+-   Your Positron project folder is connected to that repository (you can push to GitHub).
+
+-   Quarto is installed (check by typing `quarto --version` in the Positron terminal).
+
+-   Your URL will look like `https://USERNAME.github.io/REPO-NAME/`.
+
+## Step 1: How many pages do you want to publish?
+
+-   **One page** → go to **Path A**
+
+-   **Multiple pages** → go to **Path B**
+
+## Path A: One page
+
+### Option A1: `quarto publish` (fastest, recommended)
+
+**Best for:** one report or one assignment.\
+**URL:** `https://USERNAME.github.io/REPO-NAME/` (no file name needed)
+
+**Demonstration video**: Go to W02-3 module, Step 3: Learn how to publish a single qmd file onto GitHub Pages with index.html.
+
+1.  Render your file to make sure it works.
+
+2.  Commit and push your `.qmd` file to GitHub.
+
+3.  In the Positron **Terminal**, type:
+
+```r         
+   quarto publish gh-pages
+```
+
+4.  If asked to confirm, choose **Yes**. Quarto renders your document, creates a `gh-pages` branch, and uploads the result.
+
+5.  Wait 1 to 3 minutes, then open your URL. Your browser may open automatically.
+
+**Heads up:** publishing a different document later will **replace** this one. If you need more than one page, use Path B.
+
+### Option A2: Render and let GitHub serve the file
+
+**Best for:** when you don't want to use the terminal command, or want to understand how it works.\
+**URL:** `https://USERNAME.github.io/REPO-NAME/yourfile.html` (includes the file name)
+
+1.  Add this to the top of your `.qmd` so the HTML is a single self-contained file:
+
+```yaml
+   format:
+     html:
+       embed-resources: true
+```
+
+2.  Render the file. You now have `yourfile.html`.
+
+3.  Commit and push **the HTML file** to GitHub.
+
+4.  On GitHub, go to **Settings → Pages**.
+
+5.  Under **Build and deployment**, choose **Deploy from a branch**, select **main** and **/ (root)**, then **Save**.
+
+6.  Wait a few minutes and visit the URL above.
+
+**Tip:** name your file `index.qmd` and the URL won't need a file name.
+
+## Path B: Multiple pages
+
+### Step 2: Do you want the pages connected as a website?
+
+-   **No, just separate pages** → **Option B1**
+
+-   **Yes, with a menu and a home page** → **Option B2** (recommended)
+
+## Option B1: Separate pages, no website
+
+**Best for:** a few independent documents that don't need to link to each other.\
+**URLs:** `https://USERNAME.github.io/REPO-NAME/page1.html`, `.../page2.html`, and so on.
+
+1.  Add `embed-resources: true` to each `.qmd` file (see A2, step 1).
+
+2.  Render each file.
+
+3.  Commit and push all the `.html` files.
+
+4.  **Settings → Pages →** Deploy from a branch → **main** → **/ (root)** → **Save**.
+
+5.  Share each page's full URL, including the file name.
+
+**Limitation:** there's no navigation between pages, and the root URL shows a 404 unless one file is named `index.html`.
+
+## Option B2: Quarto website (pages connected with a menu)
+
+**Best for:** portfolios, multi-part projects, coursework with several pages.
+
+**Required files:**
+
+| File               | Purpose                                               |
+|--------------------|-------------------------------------------------------|
+| `_quarto.yml`      | Tells Quarto this is a website and defines the menu   |
+| `index.qmd`        | Your home page (without it, the root URL gives a 404) |
+| other `.qmd` files | Your additional pages                                 |
+
+**Minimal `_quarto.yml`:**
+
+```yaml         
+project:
+  type: website
+
+website:
+  title: "My Portfolio"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: analysis.qmd
+        text: Analysis
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    theme: cosmo
+```
+
+Once the site renders correctly (click **Render** or run `quarto preview` in the terminal), choose how to publish it:
+
+### **B2-a: `quarto publish gh-pages` (recommended)**
+
+1.  Commit and push your project to GitHub.
+
+2.  In the terminal, type:
+
+```r         
+   quarto publish gh-pages
+```
+
+3.  Confirm the prompts. Quarto renders the whole site and uploads it to the `gh-pages` branch.
+
+4.  Visit `https://USERNAME.github.io/REPO-NAME/`.
+
+5.  Run the same command again any time you update the site.
+
+**First-time check:** on GitHub, open **Settings → Pages** and confirm the source is the **gh-pages** branch and **/ (root)**.
+
+### **B2-b: Publish from a `docs` folder (manual)**
+
+1.  Add one line under `project:` in `_quarto.yml`:
+
+```yaml         
+    project:
+     type: website
+     output-dir: docs
+```
+
+2.  Render the whole project: `quarto render` in the terminal.
+
+3.  Commit and push everything, **including the `docs` folder**.
+
+4.  **Settings → Pages →** Deploy from a branch → **main** → **/docs** → **Save**.
+
+5.  Visit your URL. Repeat steps 2 and 3 every time you make changes.
+
+### **B2-c: GitHub Actions (advanced, optional)**
+
+The site rebuilds automatically every time you push. This takes extra setup (a workflow file, and your R packages must be available on GitHub's servers), so use it only if your instructor asks for it.
+
+## Quick comparison
+
+| Option | Pages | Needs `_quarto.yml`? | Terminal? | URL includes file name? | Updates |
+|----|----|----|----|----|----|
+| A1: `quarto publish` | 1 | No | Yes | No | Re-run command |
+| A2: Render + Settings | 1 | No | No | Yes (unless `index`) | Render, commit, push |
+| B1: Loose pages | Several | No | No | Yes | Render, commit, push |
+| B2-a: Website + `quarto publish` | Several | Yes | Yes | No (menu links pages) | Re-run command |
+| B2-b: Website + `/docs` | Several | Yes | Render only | No (menu links pages) | Render, commit, push |
+
+## Troubleshooting
+
+-   **404 error:** wait a few minutes, then check that Settings → Pages points to the right branch and folder. For websites, make sure `index.qmd` exists.
+
+-   **Page looks unstyled or has missing images:** you didn't commit the `*_files` folder, or you forgot `embed-resources: true`.
+
+-   **`quarto publish` fails:** make sure your folder is a Git repository with a GitHub remote and that you've pushed at least once.
+
+-   **Changes don't show up:** you edited the `.qmd` but didn't re-render or re-publish. Hard-refresh your browser (Ctrl+Shift+R or Cmd+Shift+R).
+
+-   **R code errors during publishing:** the document must render successfully on your own computer first.
