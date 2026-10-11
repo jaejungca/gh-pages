@@ -16,7 +16,7 @@ format:
 
 ### Overview
 
-After reading and grading the class notes, it was clear that a more systematic explanation was needed. I prepared and published a Canvas page. In short, there are five ways to publish: The A1 method is the one I introduced early in the semester. However, the method works only when you publish a single page to the GitHub repo. If you add more pages, subsequent pages overwrite previous pages. Thus, avoid A1 unless you are sure you will never add more pages to the same directory. If you want to publish multiple pages, A2/B1 is the next easiest. That was the focus of my lecture.
+There are five ways to publish on GitHub Pages. The A1 method is the one I introduced early in the semester. However, the method works only when you publish a single page to the GitHub repo. If you add more pages, subsequent pages overwrite previous pages. Thus, avoid A1 unless you are sure you will never add more pages to the same directory. If you want to publish multiple pages, A2/B1 is the next easiest. That was the focus of my lecture.
 
 | Option | Pages | Needs `_quarto.yml`? | Terminal? | URL includes file name? | Updates |
 |------------|------------|------------|------------|------------|------------|
@@ -162,7 +162,7 @@ flowchart TD
 **Required files:**
 
 | File               | Purpose                                               |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | `_quarto.yml`      | Tells Quarto this is a website and defines the menu   |
 | `index.qmd`        | Your home page (without it, the root URL gives a 404) |
 | other `.qmd` files | Your additional pages                                 |
